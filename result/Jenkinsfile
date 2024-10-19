@@ -1,0 +1,29 @@
+pipeline { 
+  agent any 
+  tools{ 
+    NodeJS 'nodejs 22.4.0' 
+  }
+  stages{
+    stage("build"){
+      steps{ 
+        echo 'Compiling result app'
+	dir('result'){
+          sh 'npm install; npm ls'
+	}
+      } 
+    } 
+    stage("test"){
+      steps{
+        echo 'Running Unit Tests on result app'
+	dir('result'){
+	  sh 'npm install; npm test'
+	}
+      }
+    } 
+  }
+  post{
+    always{
+      echo 'Building multibranch pipeline for result is completed..'
+    }
+  }
+}
