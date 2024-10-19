@@ -5,31 +5,34 @@ pipeline {
   }
   stages{
     stage("build"){
-	  steps{ 
-	    echo 'Compiling worker app'
-		dir('worker'){
-		  sh 'mvn compile'
-		}
-	  } 
+      steps{ 
+        echo 'Compiling worker app'
+        dir('worker'){
+          sh 'mvn compile'
+	}
+      } 
     } 
-	stage("test"){
-	  steps{
-	    echo 'Running Unit Tests on worker app'
-                dir('worker'){
-                  sh 'mvn clean test'
-	  }
+    stage("test"){
+      steps{
+	echo 'Running Unit Tests on worker app'
+        dir('worker'){
+          sh 'mvn clean test'
+	}
+      }
     } 
-	stage("package"){
-	  steps{
+    stage("package"){
+      steps{
         echo 'Packaging worker app'
-                dir('worker'){
-                  sh 'mvn package'
-	  }
+        dir('worker'){
+          sh 'mvn package -DskipTests'
+	}
+      }
     }
   }
   post{
     always{
-	  echo 'Building multibranch pipeline for worker is completed..'
-	}
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+      echo 'Building multibranch pipeline for worker is completed..'
+    }
   }
 }
